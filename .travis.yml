@@ -1,5 +1,8 @@
 sudo: required
 
+language: generic
+
+
 services:
   - docker
 
@@ -7,4 +10,20 @@ before_install:
   - docker build -t enjakarthikkumar/docker-react -f Dockerfile.dev .
 
 script:
+
+  - docker run -e CI=true enjakarthikkumar/docker-react npm run test
+
+deploy:
+  provider: elasticbeanstalk
+  region: 'us-east-1'
+  app: 'kenja-docker'
+  env: 'Kenjadocker-env'
+  bucket_name: 'elasticbeanstalk-us-east-1-292325839047'
+  bucket_path: 'kenja-docker'
+  on:
+    branch: master
+  access_key_id: '$Accesskey'
+  secret_access_key:
+    secure: '$secretkey'
   - docker run enjakarthikkumar/docker-react npm run test -- --coverage
+
